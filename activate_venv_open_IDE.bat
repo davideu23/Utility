@@ -3,14 +3,11 @@ echo Input name of the new enviroment to activate it.
 set /p venv_name=Name of venv: 
 cd %venv_name%\Scripts\
 choice /c sin /n /m "Do you want to open (s)pyder, (i)dle or (n)one"
-set INPUT=%ERRORLEVEL%
-if %INPUT% EQU s goto s
-if %INPUT% EQU i goto i
-if %INPUT% EQU n goto n
-:s
+goto %ERRORLEVEL%
+:1
 activate.bat && spyder.exe
-:i
+:2
 activate.bat && python -m idlelib.idle
-:n
+:3
 start activate.bat
 pause
