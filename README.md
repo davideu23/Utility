@@ -1,2 +1,2 @@
 # Utility
-Collection of some useful script
+Collection of some useful script.
