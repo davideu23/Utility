@@ -1,4 +1,3 @@
-REM -- @echo off --> do not print command executed
 @echo off
 
 :venvName
@@ -17,10 +16,10 @@ if exist %venv_name%\Scripts\activate.bat (
 :selectIDE
 choice /C SIN  /m "Do you want to open (s)pyder, (i)dle or (n)one"
 	goto %ERRORLEVEL%
+:1
+activate.bat && spyder.exe
+:2
+activate.bat && python -m idlelib.idle
 :3
 start activate.bat
 pause
-:2
-activate.bat && python -m idlelib.idle
-:1
-activate.bat && spyder.exe
