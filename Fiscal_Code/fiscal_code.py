@@ -225,7 +225,7 @@ if __name__ == "__main__":
     welcome_string = '\n1.Compute fiscal code\n2.Compute and save fiscal code\n3.Read File\n4.Exit'
     switcher_case = {"1": compute_fiscal_code,
                      "2": compute_and_save_fiscal_code, "3": read_file_promt ,"4": exit_fun}
-    regex_control = {"str": "^[A-z]+$",
+    regex_control = {"str": "^[A-z\s']+$",
                      "year": "^((?:1(?:8|9)\d{2})|(?:20(?:(?:(?:0|1)\d)|(?:2[0-2]))))$",
                      "month": "^((?:0?[1-9])|(?:1(?:[0-2])))$",
                      "day": "^((?:0?[1-9])|(?:1\d)|(?:2\d)|(?:3[0-1]))$",
