@@ -71,7 +71,7 @@ def get_name(stringa: str, nome: bool = True):
 def get_data(year: str, month: str, day: str, gender: str):
     months = 'ABCDEHLMPRST'  # codice assegnato ad ogni mese
     # se è maschio aggiunge lo 0 prima della cifra se serve, se è femmina al giorno si aggiunge 40
-    day = f'{int(day):02d}' if gender == "M" else f"{int(day) + 40}"
+    day = f'{int(day):02d}' if gender.upper() == "M" else f"{int(day) + 40}"
     # restituisce una stringa contenente le ultime 2 cifre dell'anno, la lettera del mese e il giorno
     return f"{year[2:]}{months[int(month) - 1]}{day}"
 
