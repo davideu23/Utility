@@ -157,7 +157,7 @@ def get_input(question: str, validation: str):
     return get_input(question, validation)
 
 
-def control_regex(value: str, re_str: str) --> bool:
+def control_regex(value: str, re_str: str) -> bool:
     """
     Controls if the string match the regex passed
 
