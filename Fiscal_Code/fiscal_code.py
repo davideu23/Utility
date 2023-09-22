@@ -8,12 +8,13 @@ Created on Tue Mar 16 20:43:32 2021
 
 import re
 from time import sleep
+from typing import Union, Tuple, List, Optional
 
 #### CLASS ####
 
 
-class ExitLoopError(BaseException):
-    pass
+class ExitLoopError(BaseException): pass
+class TownNotFounded(BaseException): pass
 
 #### FUNCTIONS ####
 
@@ -40,9 +41,7 @@ def exec_program(string: str, switcher: dict):
 ## MAIN FUNCTIONS ##
 
 # Genera una lista o lista di liste da un file di testo (non codificato)
-
-
-def genfromtxt(nfile: str, sep: str = ';', header: int = 0, deletechars: str = '\n', cols=None):
+def genfromtxt(nfile: str, sep: str = ';', header: int = 0, deletechars: str = '\n', cols:Optional[Union[None, Tuple[int, int, int], List[int]]] = None) -> List[List[str]]:
     with open(nfile) as f:
         if cols == None:
             return [record.replace(deletechars, '').split(sep) for record in f.readlines()[header:]]
@@ -50,12 +49,12 @@ def genfromtxt(nfile: str, sep: str = ';', header: int = 0, deletechars: str = '
 
 
 # Rende una lista di liste una unica lista
-def flat(lista: list):
+def flat(lista: List[List]) -> List:
     return [j for i in lista for j in i]
 
 
 # Crea il codice sia per il nome che per il cognome
-def get_name(stringa: str, nome: bool = True):
+def get_name(stringa: str, nome: bool = True) -> str:
     vocali, consonanti = 'AEIOU', 'BCDFGHJKLMNPQRSTVWXYZ'  # assegnazione doppia
     # consonanti e vocali nel nome
     cons, voc = ''.join(c for c in stringa.upper() if c in consonanti), ''.join(
@@ -68,7 +67,7 @@ def get_name(stringa: str, nome: bool = True):
 
 
 # Crea il codice per la data di nascita
-def get_data(year: str, month: str, day: str, gender: str):
+def get_data(year: str, month: str, day: str, gender: str) -> str:
     months = 'ABCDEHLMPRST'  # codice assegnato ad ogni mese
     # se è maschio aggiunge lo 0 prima della cifra se serve, se è femmina al giorno si aggiunge 40
     day = f'{int(day):02d}' if gender.upper() == "M" else f"{int(day) + 40}"
@@ -77,19 +76,19 @@ def get_data(year: str, month: str, day: str, gender: str):
 
 
 # Crea il codice per il comune
-def get_town(comune: str):
+def get_town(comune: str) -> str:
     com = flat(genfromtxt(r'Data\CFCodiceComuniItalia.csv', sep=';', header=2,
                           deletechars='\n', cols=(0, 3, 2)))  # genera dal file una lista
     # creo il dizionario chiave:valore dove chiave è il comune e il valore è il codice assegnato ad esso
     dict_com = {k: v for k, v in zip(com[1::2], com[::2])}
     if comune.upper() not in dict_com.keys():
-        raise Exception('Town not found')  # controllo se il comune esiste
+        raise TownNotFounded(f'Town {comune} not found')  # controllo se il comune esiste
     # restituisci il codice assegnato al comune
     return dict_com[comune.upper()]
 
 
 # Definisce il carattere di controllo, ultimo carattere del codice fiscale
-def get_remainder(cod: str):
+def get_remainder(cod: str) -> str:
     # controllo se il codice passato contiene 15 caratteri, generalmente è sempre così
     if len(cod) != 15:
         raise Exception('ERRORE NELLA FORMULAZIONE DEL CODICE')
@@ -107,9 +106,11 @@ def get_remainder(cod: str):
 
 
 # Genera e salva codice fiscale
-def get_fiscal_code(surname:str, name:str, year:str, month:str, day:str, gender:str, town:str, save:bool=False):
+def get_fiscal_code(surname:str, name:str, year:str, month:str, day:str, gender:str, town:str, save:Optional[bool]=False) -> str:
     # genera il codice fiscale senza l'ultimo carattere
-    codice_fiscale = f"{get_name(surname, False)}{get_name(name)}{get_data(year, month, day, gender)}{get_town(town)}"
+    codice_fiscale = f"{get_name(surname, False)}{get_name(name)}{get_data(year, month, day, gender)}"
+    try: codice_fiscale += f"{get_town(town)}"
+    except TownNotFounded: codice_fiscale += f"{get_town(town)}"
     # restituisce il codice fiscale + carattere di controllo
     codice_fiscale = codice_fiscale + get_remainder(codice_fiscale)
     if save:
@@ -119,7 +120,7 @@ def get_fiscal_code(surname:str, name:str, year:str, month:str, day:str, gender:
 
 
 # Salva su file una lista
-def write_codice_fiscale(lista:list):
+def write_codice_fiscale(lista:List[str]) -> None:
     writable = ';'.join(i.upper() for i in lista)
     _header = "Surname;Name;Year;Month;Day;Gender;Town;Fiscal_code"
 
@@ -156,7 +157,7 @@ def get_input(question: str, validation: str):
     return get_input(question, validation)
 
 
-def control_regex(value: str, re_str: str):
+def control_regex(value: str, re_str: str) --> bool:
     """
     Controls if the string match the regex passed
 
